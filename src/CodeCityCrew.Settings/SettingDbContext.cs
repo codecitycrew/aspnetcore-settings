@@ -9,6 +9,8 @@ namespace CodeCityCrew.Settings
     /// <seealso cref="DbContext" />
     public class SettingDbContext : DbContext
     {
+        public SettingDbContext() { }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingDbContext"/> class.
         /// </summary>
