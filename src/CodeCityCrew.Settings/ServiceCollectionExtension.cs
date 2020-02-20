@@ -1,4 +1,5 @@
-﻿using CodeCityCrew.Settings.Abstractions;
+﻿using System;
+using CodeCityCrew.Settings.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +22,18 @@ namespace CodeCityCrew.Settings
             services.AddDbContext<SettingDbContext>(
                 options => { options.UseSqlServer(configuration.GetConnectionString(connectionStringName)); },
                 ServiceLifetime.Singleton);
+
+            services.AddSingleton<ISettingService, SettingService>();
+        }
+
+        /// <summary>
+        /// Adds the settings.
+        /// </summary>
+        /// <param name="services">The services.</param>
+        /// <param name="optionsAction">The database context options builder.</param>
+        public static void AddSettings(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction)
+        {
+            services.AddDbContext<SettingDbContext>(optionsAction, ServiceLifetime.Singleton);
 
             services.AddSingleton<ISettingService, SettingService>();
         }
