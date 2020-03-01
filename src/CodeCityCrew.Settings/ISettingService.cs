@@ -13,6 +13,13 @@
         T As<T>() where T : new();
 
         /// <summary>
+        /// Gets object by full name.
+        /// </summary>
+        /// <param name="id">The full name.</param>
+        /// <returns></returns>
+        object As(string id);
+
+        /// <summary>
         /// Sets the specified value.
         /// </summary>
         /// <typeparam name="T"></typeparam>

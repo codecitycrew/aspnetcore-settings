@@ -28,5 +28,13 @@ namespace CodeCityCrew.Settings.Model
         /// The name of the environment.
         /// </value>
         public string EnvironmentName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the assembly.
+        /// </summary>
+        /// <value>
+        /// The name of the assembly.
+        /// </value>
+        public string AssemblyName { get; set; }
     }
 }

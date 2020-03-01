@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
+using System.Runtime.Loader;
 
 namespace CodeCityCrew.Settings
 {
@@ -26,7 +28,7 @@ namespace CodeCityCrew.Settings
 
         public SettingService(SettingDbContext applicationDbContext, IWebHostEnvironment webHostEnvironment)
         {
-            this._settingsDbContext = applicationDbContext;
+            _settingsDbContext = applicationDbContext;
             _environmentName = webHostEnvironment.EnvironmentName;
             _settingsDictionary = new ConcurrentDictionary<string, string>();
         }
@@ -49,18 +51,13 @@ namespace CodeCityCrew.Settings
 
             if (setting == null)
             {
-                setting = new Setting()
-                {
-                    Id = id,
-                    Value = JsonConvert.SerializeObject(new T()),
-                    EnvironmentName = _environmentName
-                };
-
-                _settingsDictionary.TryAdd(setting.Id, setting.Value);
+                setting = Create<T>(JsonConvert.SerializeObject(new T()));
 
                 _settingsDbContext.Settings.Add(setting);
 
                 _settingsDbContext.SaveChanges();
+
+                _settingsDictionary.TryAdd(setting.Id, setting.Value);
             }
             else
             {
@@ -68,6 +65,31 @@ namespace CodeCityCrew.Settings
             }
 
             return JsonConvert.DeserializeObject<T>(setting.Value);
+        }
+
+        public object As(string id)
+        {
+            var setting = _settingsDbContext.Settings.Find(id, _environmentName);
+
+            if (setting == null)
+            {
+                return null;
+            }
+
+            var assembly = AssemblyLoadContext.Default.Assemblies.FirstOrDefault(item => item.GetName().Name == setting.AssemblyName);
+
+            if (assembly == null)
+            {
+                throw new Exception();
+            }
+
+            var instanceFrom = Activator.CreateInstanceFrom(assembly.Location, setting.Id);
+
+            var type = instanceFrom.Unwrap().GetType();
+
+            var deserializeObject = JsonConvert.DeserializeObject(setting.Value, type);
+
+            return deserializeObject;
         }
 
         public void Save<T>(T value)
@@ -80,12 +102,7 @@ namespace CodeCityCrew.Settings
             //not found.
             if (setting == null)
             {
-                setting = new Setting
-                {
-                    Id = id,
-                    Value = JsonConvert.SerializeObject(value),
-                    EnvironmentName = _environmentName
-                };
+                setting = Create<T>(JsonConvert.SerializeObject(value));
 
                 _settingsDictionary.TryAdd(setting.Id, setting.Value);
 
@@ -101,6 +118,19 @@ namespace CodeCityCrew.Settings
             }
 
             _settingsDbContext.SaveChanges();
+        }
+
+        private Setting Create<T>(string value)
+        {
+            var type = typeof(T);
+
+            return new Setting
+            {
+                Id = type.FullName,
+                Value = value,
+                EnvironmentName = _environmentName,
+                AssemblyName = type.Assembly.GetName().Name
+            };
         }
     }
 }
