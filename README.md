@@ -1,6 +1,6 @@
 # Introduction
 
-Asp.net Core Settings is an open-source library designed to quickly access and save settings using latest .net core technlogy.
+Asp.net Core Settings is an open-source library designed to quickly access and save settings using latest .net core technology.
 
 # Get Started
 
