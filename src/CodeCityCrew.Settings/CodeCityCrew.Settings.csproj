@@ -7,6 +7,9 @@
     <Company>Code City Crew LLC</Company>
     <Product>Asp.net Core Setting</Product>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Version>1.0.0-alpha</Version>
+    <PackageProjectUrl>https://github.com/codecitycrew/aspnetcore-settings</PackageProjectUrl>
+    <PackageTags />
   </PropertyGroup>
 
   <ItemGroup>
