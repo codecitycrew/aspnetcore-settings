@@ -7,9 +7,14 @@
     <Company>Code City Crew LLC</Company>
     <Product>Asp.net Core Setting</Product>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>1.0.0-alpha</Version>
+    <Version>1.0.1-alpha</Version>
     <PackageProjectUrl>https://github.com/codecitycrew/aspnetcore-settings</PackageProjectUrl>
-    <PackageTags />
+    <PackageTags>setting,asp.net core</PackageTags>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageIconUrl />
+    <Description>Access and save your settings faster than ever.</Description>
+    <RepositoryUrl>https://github.com/codecitycrew/aspnetcore-settings</RepositoryUrl>
+    <Copyright>Code City Crew LLC</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +26,13 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="image\icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
