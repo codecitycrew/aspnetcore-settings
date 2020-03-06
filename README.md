@@ -27,3 +27,34 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     var myConfigSetting = app.Setting<MyConfigSetting>();
 }
 ```
+
+```csharp
+
+public class MyService : IMyService
+{
+    private readonly ISettingService _settingsService;
+    
+    public MyService(ISettingService settingService)
+    {
+        _settingsService = settingService;
+    }
+    
+    public string GetApplicationName()
+    {
+        return _settingsService.As<MySetting>().ApplicationName;
+    }
+    
+    public void SetApplicationName(string applicationName)
+    {
+        var mySetting = _settingsService.As<MySetting>();
+        
+        mySetting.ApplicationName = applicationName;
+        
+        _settingsService.Save(mySetting);
+    }
+}
+
+```
+
+
+
