@@ -12,6 +12,11 @@ namespace CodeCityCrew.Settings
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingDbContext"/> class.
         /// </summary>
+        public SettingDbContext() { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SettingDbContext"/> class.
+        /// </summary>
         /// <param name="options">The options.</param>
         public SettingDbContext(DbContextOptions<SettingDbContext> options) : base(options)
         {
