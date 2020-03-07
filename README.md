@@ -8,9 +8,9 @@ Asp.net Core Settings is an open-source library designed to quickly access and s
 Install-Package CodeCityCrew.Settings -Version 1.0.1-alpha
 ```
 
-### Package Manager console
+### Package Manager Console
 ```ps
-Update-Database -Context SettingContext
+Update-Database -Context SettingDbContext
 ```
 
 # Get Started
