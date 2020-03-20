@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using CodeCityCrew.Settings.Abstractions;
 using CodeCityCrew.Settings.Model;
 using Microsoft.AspNetCore.Hosting;
 using Moq;
@@ -93,7 +92,7 @@ namespace CodeCityCrew.Settings.Test
                     context.Settings.Find("CodeCityCrew.Settings.Test.MySetting", "Development"))
                 .Returns(() => new Setting
                 {
-                    EnvironmentName = "Application", 
+                    EnvironmentName = "Application",
                     Id = "CodeCityCrew.Settings.Test.MySetting",
                     AssemblyName = "CodeCityCrew.Settings.Test",
                     Value = "{\"ApplicationName\":\"Application\",\"CreatedDate\":\"9999-12-31T23:59:59.9999999\"}"
@@ -113,9 +112,9 @@ namespace CodeCityCrew.Settings.Test
 
             Assert.NotNull(mySetting);
 
-            Assert.AreEqual("Application", (mySetting as MySetting).ApplicationName);
+            Assert.AreEqual("Application", (mySetting as MySetting)?.ApplicationName);
 
-            Assert.AreEqual(DateTime.MaxValue, (mySetting as MySetting).CreatedDate);
+            Assert.AreEqual(DateTime.MaxValue, ((MySetting) mySetting).CreatedDate);
         }
 
 
@@ -146,9 +145,9 @@ namespace CodeCityCrew.Settings.Test
 
             Assert.NotNull(mySetting);
 
-            Assert.AreEqual("Application", (mySetting as MySettingNeverCached).ApplicationName);
+            Assert.AreEqual("Application", mySetting.ApplicationName);
 
-            Assert.AreEqual(DateTime.MaxValue, (mySetting as MySettingNeverCached).CreatedDate);
+            Assert.AreEqual(DateTime.MaxValue, mySetting.CreatedDate);
         }
 
         [Test]
@@ -200,9 +199,9 @@ namespace CodeCityCrew.Settings.Test
 
             MockSettingDbContext.Verify(context => context.SaveChanges(), Times.Never);
 
-            
 
-            
+
+
         }
 
         [Test]
