@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CodeCityCrew.Settings.Test
 {
@@ -9,5 +7,11 @@ namespace CodeCityCrew.Settings.Test
         public string ApplicationName { get; set; } = "Application";
 
         public DateTime CreatedDate { get; set; } = DateTime.MaxValue;
+    }
+
+    public class MySettingNeverCached
+    {
+        public string ApplicationName { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }

@@ -6,11 +6,12 @@
     public interface ISettingService
     {
         /// <summary>
-        /// Gets the setting.
+        /// Access the specified setting.
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="forceReload">if set to <c>true</c> [force reload].</param>
         /// <returns></returns>
-        T As<T>() where T : new();
+        T As<T>(bool forceReload = false) where T : new();
 
         /// <summary>
         /// Gets object by full name.

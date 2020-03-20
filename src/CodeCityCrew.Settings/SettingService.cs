@@ -1,11 +1,11 @@
-﻿using CodeCityCrew.Settings.Abstractions;
-using CodeCityCrew.Settings.Model;
-using Microsoft.AspNetCore.Hosting;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Runtime.Loader;
+using CodeCityCrew.Settings.Abstractions;
+using CodeCityCrew.Settings.Model;
+using Microsoft.AspNetCore.Hosting;
+using Newtonsoft.Json;
 
 namespace CodeCityCrew.Settings
 {
@@ -33,21 +33,21 @@ namespace CodeCityCrew.Settings
             _settingsDictionary = new ConcurrentDictionary<string, string>();
         }
 
-        public T As<T>() where T : new()
+        public T As<T>(bool forceReload = false) where T : new()
         {
-            var id = typeof(T).FullName;
+            var key = typeof(T).FullName;
 
-            if (id == null)
+            if (key == null)
             {
                 throw new InvalidOperationException();
             }
 
-            if (_settingsDictionary.TryGetValue(id, out var value))
+            if (!forceReload && _settingsDictionary.TryGetValue(key, out var value))
             {
                 return JsonConvert.DeserializeObject<T>(value);
             }
 
-            var setting = _settingsDbContext.Settings.Find(id, _environmentName);
+            var setting = _settingsDbContext.Settings.Find(key, _environmentName);
 
             if (setting == null)
             {
@@ -56,13 +56,9 @@ namespace CodeCityCrew.Settings
                 _settingsDbContext.Settings.Add(setting);
 
                 _settingsDbContext.SaveChanges();
+            }
 
-                _settingsDictionary.TryAdd(setting.Id, setting.Value);
-            }
-            else
-            {
-                _settingsDictionary.TryAdd(id, setting.Value);
-            }
+            _settingsDictionary.AddOrUpdate(key, setting.Value, (s, s1) => setting.Value);
 
             return JsonConvert.DeserializeObject<T>(setting.Value);
         }
@@ -80,7 +76,7 @@ namespace CodeCityCrew.Settings
 
             if (assembly == null)
             {
-                throw new Exception();
+                return null;
             }
 
             var instanceFrom = Activator.CreateInstanceFrom(assembly.Location, setting.Id);
