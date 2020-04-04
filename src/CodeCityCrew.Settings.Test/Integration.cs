@@ -34,7 +34,7 @@ namespace CodeCityCrew.Settings.Test
         }
 
         [Test]
-        public void Test1()
+        public void Accessing_same_setting_twice()
         {
             // creates new entry
             var setting = SettingService.As<MySetting>();
@@ -54,20 +54,22 @@ namespace CodeCityCrew.Settings.Test
         }
 
         [Test]
-        public void Test4()
+        public void Should_return_object()
         {
             // creates new entry
             var setting = SettingService.As<MySetting>();
+
+            Assert.NotNull(setting);
         }
 
         [Test]
-        public void Test2()
+        public void Should_return_null()
         {
             SettingService.Save((MySetting) null);
 
-            var c = SettingService.As<MySetting>();
+            var mySetting = SettingService.As<MySetting>();
 
-            Assert.IsNull(c);
+            Assert.IsNull(mySetting);
         }
     }
 }

@@ -42,6 +42,7 @@ namespace CodeCityCrew.Settings
                 throw new InvalidOperationException();
             }
 
+            // if force reload is false, try get setting from dictionary otherwise try to find it in the database.
             if (!forceReload && _settingsDictionary.TryGetValue(key, out var value))
             {
                 return JsonConvert.DeserializeObject<T>(value);
