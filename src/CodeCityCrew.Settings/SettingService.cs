@@ -66,27 +66,41 @@ namespace CodeCityCrew.Settings
 
         public object As(string id)
         {
-            var setting = _settingsDbContext.Settings.Find(id, _environmentName);
-
-            if (setting == null)
-            {
-                return null;
-            }
-
-            var assembly = AssemblyLoadContext.Default.Assemblies.FirstOrDefault(item => item.GetName().Name == setting.AssemblyName);
+            var assembly = AssemblyLoadContext.Default.Assemblies.FirstOrDefault(assembly1 =>
+                assembly1.DefinedTypes.Any(info => info.FullName == id));
 
             if (assembly == null)
             {
                 return null;
             }
 
-            var instanceFrom = Activator.CreateInstanceFrom(assembly.Location, setting.Id);
+            if (_settingsDictionary.TryGetValue(id, out var value))
+            {
+                return JsonConvert.DeserializeObject(value);
+            }
 
-            var type = instanceFrom.Unwrap().GetType();
+            var setting = _settingsDbContext.Settings.Find(id, _environmentName);
 
-            var deserializeObject = JsonConvert.DeserializeObject(setting.Value, type);
+            if (setting == null)
+            {
+                var instance = Activator.CreateInstanceFrom(assembly.Location, id);
 
-            return deserializeObject;
+                var unwrap = instance.Unwrap();
+
+                var serializeObject = JsonConvert.SerializeObject(unwrap);
+
+                setting = new Setting { Id = id, AssemblyName = assembly .GetName().Name, EnvironmentName = _environmentName, Value = serializeObject };
+
+                _settingsDbContext.Settings.Add(setting);
+
+                _settingsDbContext.SaveChanges();
+            }
+
+            _settingsDictionary.AddOrUpdate(id, setting.Value, (s, s1) => setting.Value);
+
+            var type = assembly.DefinedTypes.FirstOrDefault(info => info.FullName == id);
+
+            return JsonConvert.DeserializeObject(setting.Value, type);
         }
 
         public void Save<T>(T value)

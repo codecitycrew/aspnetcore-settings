@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
+using System.Runtime.Loader;
 using CodeCityCrew.Settings.Model;
 using Microsoft.AspNetCore.Hosting;
 using Moq;
@@ -9,6 +11,10 @@ namespace CodeCityCrew.Settings.Test
 {
     public class AsT
     {
+        public Mock<IWebHostEnvironment> MockIWebHostEnvironment { get; set; }
+
+        public Mock<SettingDbContext> MockSettingDbContext { get; set; }
+
         [SetUp]
         public void Setup()
         {
@@ -48,10 +54,6 @@ namespace CodeCityCrew.Settings.Test
             Assert.AreEqual(DateTime.MaxValue, mySetting.CreatedDate);
         }
 
-        public Mock<IWebHostEnvironment> MockIWebHostEnvironment { get; set; }
-
-        public Mock<SettingDbContext> MockSettingDbContext { get; set; }
-
         [Test]
         public void As_By_T()
         {
@@ -84,39 +86,6 @@ namespace CodeCityCrew.Settings.Test
 
             Assert.AreEqual(DateTime.MaxValue, mySetting.CreatedDate);
         }
-
-        [Test]
-        public void As_By_Namespace()
-        {
-            MockSettingDbContext.Setup(context =>
-                    context.Settings.Find("CodeCityCrew.Settings.Test.MySetting", "Development"))
-                .Returns(() => new Setting
-                {
-                    EnvironmentName = "Application",
-                    Id = "CodeCityCrew.Settings.Test.MySetting",
-                    AssemblyName = "CodeCityCrew.Settings.Test",
-                    Value = "{\"ApplicationName\":\"Application\",\"CreatedDate\":\"9999-12-31T23:59:59.9999999\"}"
-                });
-
-            var settingService = new SettingService(MockSettingDbContext.Object, MockIWebHostEnvironment.Object);
-
-            //action
-            var mySetting = settingService.As("CodeCityCrew.Settings.Test.MySetting");
-
-            MockSettingDbContext.Verify(
-                context => context.Settings.Find("CodeCityCrew.Settings.Test.MySetting", "Development"), Times.Once);
-
-            MockSettingDbContext.Verify(context => context.Settings.Add(It.IsAny<Setting>()), Times.Never);
-
-            MockSettingDbContext.Verify(context => context.SaveChanges(), Times.Never);
-
-            Assert.NotNull(mySetting);
-
-            Assert.AreEqual("Application", (mySetting as MySetting)?.ApplicationName);
-
-            Assert.AreEqual(DateTime.MaxValue, ((MySetting) mySetting).CreatedDate);
-        }
-
 
         [Test]
         public void As_By_T_Is_Not_Found_In_Dictionary_Retrieve_From_Database()
@@ -244,6 +213,13 @@ namespace CodeCityCrew.Settings.Test
             dictionary.AddOrUpdate("2", "2_value", (s, s1) => "2_value");
 
             dictionary.AddOrUpdate("1", "2_value", (s, s1) => "2_value");
+        }
+
+        [Test]
+        public void Assemblies()
+        {
+            var firstOrDefault = AssemblyLoadContext.Default.Assemblies.FirstOrDefault(assembly =>
+                assembly.DefinedTypes.Any(info => info.FullName == "CodeCityCrew.Settings.Test.MySetting"));
         }
     }
 }

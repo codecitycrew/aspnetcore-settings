@@ -9,7 +9,7 @@
         /// Access the specified setting.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="forceReload">if set to <c>true</c> [force reload].</param>
+        /// <param name="forceReload">if set to <c>true</c> [force reload], it reads from data base.</param>
         /// <returns></returns>
         T As<T>(bool forceReload = false) where T : new();
 
