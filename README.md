@@ -5,6 +5,10 @@ Asp.net Core Settings is an open-source library designed to quickly access and s
 # Install
 
 ```ps
+Install-Package Microsoft.EntityFrameworkCore
+Install-Package Microsoft.EntityFrameworkCore.Design
+Install-Package Microsoft.EntityFrameworkCore.SqlServer
+Install-Package Microsoft.EntityFrameworkCore.Tools
 Install-Package CodeCityCrew.Settings -Version 1.0.1-alpha
 ```
 
